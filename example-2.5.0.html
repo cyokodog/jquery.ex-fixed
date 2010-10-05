@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<title>exFixed.js - cyokodog::lab</title>
+		<script src="./jquery-1.4.2.min.js"></script>
+		<script src="./jquery.exfixed-latest.js"></script>
+		<style>
+			html{
+				background-color:#333;
+			}
+			body{
+				background-color:#555;
+			}
+			div.stripe{
+				width:2000px;
+				height:50px;
+				margin:50px 0;
+				background:#505050;
+			}
+			#a{
+				background:#aaccff;
+			}
+			#b{
+				background:#aaffcc;
+			}
+			#c{
+				background:#ccffaa;
+			}
+			#d{
+				background:#aaffff;
+			}
+			.fixed{
+				text-align:center;
+			}
+
+		</style>
+        <script>
+			jQuery(function($){
+				for(var i=0;i<100;i++) $('<div class="stripe">&nbsp;</div>').appendTo('div.dummy');
+				var targets = $('#a,#b,#c,#d');
+				targets.each(function(idx){
+					var size , orgSize;
+					var target = targets.eq(idx);
+					target.css('opacity' , .7).css( 'z-index' , idx );
+					var fx = target.exFixed({
+						api:true,
+						dynamicFixed:true,
+					    width:250 - ( idx * 50 ),
+					    height:250 - ( idx * 50 ),
+					    right:100 + ( idx * 25 ),
+					    bottom:100 + ( idx * 25 )
+					});
+					target.click( function(){
+						fx.fixedOpen( function(){
+							size = {
+							  right : '25%',
+							  bottom : ( idx * 25 ) + '%',
+							  width : '50%',
+							  height : '24%'
+							}
+							target.animate( fx.getFixedSize(size) , function(){
+								fx.fixedClose( size );
+							});
+						})
+					});
+				});
+			});
+        </script>
+    </head>
+    <body>
+		<h1>IE6 Position Fixed Sample</h1>
+		<h2>jQuery.exFixed.js Ver 1.2</h2>
+		<p>ボックスをクリックしてください</p>
+		<div id="a" class="fixed">click!</div>
+		<div id="b" class="fixed">click!</div>
+		<div id="c" class="fixed">click!</div>
+		<div id="d" class="fixed">click!</div>
+		<div class="dummy"></div>
+	</body>
+</html>

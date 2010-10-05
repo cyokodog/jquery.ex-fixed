@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <style>
+            div.fixed {
+                position: fixed;
+                width: 150px;
+                height: 150px;
+                text-align: center;
+            }
+            
+            #fix1 {
+                left: 100px;
+                top: 100px;
+                background: #aaccff;
+            }
+            
+            #fix2 {
+                left: 150px;
+                top: 150px;
+                background: #ccaaff;
+            }
+            
+            body {
+                width: 2000px;
+                height: 2000px;
+            }
+            
+            div.box {
+                position: relative;
+                overflow: scroll;
+                border: solid 4px #eee;
+                width: 400px;
+                height: 400px;
+                margin: 0 200px;
+            }
+        </style>
+        <script src="../jquery-1.4.2.min.js"></script>
+		<script src="./positionfixed-1.1.0.js"></script>
+        <script>
+            jQuery(function($j){
+				$j('#fix1,#fix2').positionFixed()
+            })
+        </script>
+    </head>
+    <body>
+        <div id="fix1" class="fixed">
+            position : fixed
+        </div>
+        <div class="box">
+            position : relative; overflow : scroll;
+            <div id="fix2" class="fixed">
+                position : fixed
+            </div>
+        </div>
+	</body>
+</html>

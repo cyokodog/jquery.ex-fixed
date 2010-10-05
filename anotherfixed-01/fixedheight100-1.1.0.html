@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <script src="../jquery-1.4.2.min.js"></script>
+        <script>
+            jQuery(function($j){
+				$j('.fixed').css({
+					position:'absolute',
+					opacity:0
+				}).animate({
+					opacity:.5
+				},3000)
+            })
+        </script>
+		<style>
+			html,body{   
+			    height:100%;   
+			    overflow:auto;   
+			    margin:0;   
+			    padding:0;   
+			}  
+			html{
+				background:#333;
+				color:#fff;
+			}
+			body{
+				background:#555;
+				color:#fff;
+			}
+			.abs{
+				position:absolute;
+				top:40%;
+				left:5%;
+				width:100px;
+				height:100px;
+				background:#aaccff;
+				color:#0055aa;
+				font-weight:bold;
+				text-align:center;
+			}
+			.fixed{
+				position:fixed;
+			}
+			#head{
+				width:100%;
+				height:20%;
+				top:0;
+				left:0;
+				background:#aaccff;
+				color:red;
+			}
+			#leftNavi{
+				width:20%;
+				height:100%;
+				top:0;
+				left:0;
+				background:#ccffaa;
+				color:red;
+			}
+			#foot{
+				width:100%;
+				height:20%;
+				bottom:0;
+				left:0;
+				background:#aaffff;
+				color:red;
+			}
+			#rightNavi{
+				width:20%;
+				height:100%;
+				top:0;
+				right:0;
+				background:#ccaaff;
+				color:red;
+			}
+			.dummy{
+				width:2000px;
+				height:2000px;
+			}
+			#center{
+				width:20%;
+				height:20%;
+				top:40%;
+				left:40%;
+				background:#ccccff;
+				color:red;
+			}
+		</style>
+    </head>
+    <body>
+		<h1>IE6 Position Fixed Sample</h1>
+		<h2>html,body を height:100%;overflow:auto させる方法</h2>
+		<p>標準モードに適用してます。</p>
+		<p>body 要素内のコンテンツが大きい状態で、fixed 要素のサイズにパーセント(%)を指定すると
+		本来フロントに表示されるべき body 要素のスクロールバーが右側に隠れてしまいます。</p>
+		<p>全て absolute 要素の表示位置が固定化されてしまいます。
+		relative 要素で囲ってもIEのバグのため固定表示されます。</p>
+		<div class="dummy"></div>
+		<div class="abs">absolute</div>
+		<div id="leftNavi" class="fixed"></div>
+		<div id="rightNavi" class="fixed"></div>
+		<div id="head" class="fixed"></div>
+		<div id="foot" class="fixed"></div>
+		<div id="center" class="fixed"></div>
+</body>
+</html>

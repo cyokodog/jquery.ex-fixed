@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<title>exFixed.js - cyokodog::lab</title>
+        <script src="../jquery-1.4.2.min.js"></script>
+        <script src="./jquery.exfixed.1.0.0.js"></script>
+		<style>
+			html{
+				background-color:#333;
+			}
+			body{
+				background-color:#555;
+			}
+			div.stripe{
+				width:2000px;
+				height:50px;
+				margin:50px 0;
+				background:#505050;
+			}
+			.fixed{
+				text-align:center;
+			}
+			#a{
+				background:#aaccff;
+			}
+			#b{
+				background:#aaffff;
+			}
+
+		</style>
+        <script>
+jQuery(function($j){
+	for(var i=0;i<100;i++)$j('<div class="stripe">&nbsp;</div>').appendTo('div.dummy');
+	$j('.fixed').css('opacity',.7)
+	$j('#a').exFixed({
+		width:100,
+		height:100,
+		top:50,
+		left:50
+	}).click(function(){
+		$j(this).animate({
+			width:200,
+			height:200,
+			top:0,
+			left:0
+		})
+	})
+	$j('#b').exFixed({
+		width:100,
+		height:100,
+		right:50,
+		bottom:50
+	}).click(function(){
+		$j(this).animate({
+			width:200,
+			height:200,
+			right:0,
+			bottom:0
+		})
+	})
+})
+        </script>
+    </head>
+    <body>
+		<h1>IE6 Position Fixed Sample</h1>
+		<h2>jQuery.exFixed.js Ver 1.0</h2>
+		<p>DHTML 適用に問題あり</p>
+		<div id="a" class="fixed">click!</div>
+		<div id="b" class="fixed">click!</div>
+		<div class="dummy"></div>
+    <script type="text/javascript"><!--
+var fhp_c_pc = navigator.userAgent.toLowerCase();
+var fhp_ie = ((fhp_c_pc.indexOf("msie") != -1) && (fhp_c_pc.indexOf("opera") == -1));
+var fhp_cs, fhp_wt, fhp_dm;
+
+if (fhp_ie) {
+        fhp_cs = document.charset;
+}else{
+        fhp_cs = document.characterSet;
+}
+fhp_dm = document.location;
+
+fhp_wt = "";
+fhp_wt = '<' + 'script src="http://web.fc2.com/header.php?cs=' + fhp_cs + '&dm=' + fhp_dm + '" charset="UTF-8"><' + '/script>';
+fhp_wt += '<' + 'script src="http://web.fc2.com/footer/footer.php?cs=' + fhp_cs + '&dm=' + fhp_dm + '"><' + '/script>';
+document.write(fhp_wt);
+//--></script>
+<!-- FC2, inc.-->
+<img src="http://media.fc2.com/counter_img.php?id=50" style="visibility:hidden" alt="inserted by FC2 system" width="0" height="0">
+<!-- FC2, inc.-->
+</body>
+</html>

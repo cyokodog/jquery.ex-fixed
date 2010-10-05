@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>exFixed.js - cyokodog::lab</title>
+        <script src="../jquery-1.4.2.min.js"></script>
+        <script src="./jquery.exfixed.1.0.0.js"></script>
+		<style>
+			html{
+				background-color:#333;
+				background-image:url(null);
+				background-attachment:fixed;
+			}
+			body{
+				background-color:#555;
+			}
+			div.stripe{
+				width:2000px;
+				height:50px;
+				margin:50px 0;
+				background:#505050;
+			}
+			.fixed{
+				text-align:center;
+			}
+			#a{
+				background:#aaccff;
+			}
+			#b{
+				background:#aaffff;
+				position:fixed;
+				right:50px;
+				bottom:50px;
+				width:100px;
+				height:100px;
+			}
+
+		</style>
+        <script>
+jQuery(function($j){
+	for(var i=0;i<100;i++)$j('<div class="stripe">&nbsp;</div>').appendTo('div.dummy');
+	if($j.browser.msie && ($j.browser.version < 7.0 || !$j.boxModel)){
+		$j('#b').css('position','absolute')[0].style.setExpression('','this.style.filter="alpha(opacity=50 ,finishopacity=50 ,style=1)"');
+	}
+	$j('#b').click(function(){
+		$j(this).animate({
+			width:200,
+			height:200,
+			right:0,
+			bottom:0
+		})
+	})
+})
+        </script>
+    </head>
+    <body>
+		<h1>IE6 Position Fixed Sample</h1>
+		<h2>element.style.setExpression('', 'this.style.filter=""')方式</h2>
+		<p>bottom / right 限定で fixed が可能</p>
+		<p>スクロール時若干ちらつく</p>
+		<p>px単位のサイズ、位置変更なら問題なし</p>
+		<div id="b" class="fixed">click!</div>
+		<div class="dummy"></div>
+    <script type="text/javascript"><!--
+var fhp_c_pc = navigator.userAgent.toLowerCase();
+var fhp_ie = ((fhp_c_pc.indexOf("msie") != -1) && (fhp_c_pc.indexOf("opera") == -1));
+var fhp_cs, fhp_wt, fhp_dm;
+
+if (fhp_ie) {
+        fhp_cs = document.charset;
+}else{
+        fhp_cs = document.characterSet;
+}
+fhp_dm = document.location;
+
+fhp_wt = "";
+fhp_wt = '<' + 'script src="http://web.fc2.com/header.php?cs=' + fhp_cs + '&dm=' + fhp_dm + '" charset="UTF-8"><' + '/script>';
+fhp_wt += '<' + 'script src="http://web.fc2.com/footer/footer.php?cs=' + fhp_cs + '&dm=' + fhp_dm + '"><' + '/script>';
+document.write(fhp_wt);
+//--></script>
+<!-- FC2, inc.-->
+<img src="http://media.fc2.com/counter_img.php?id=50" style="visibility:hidden" alt="inserted by FC2 system" width="0" height="0">
+<!-- FC2, inc.-->
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<title>exFixed.js - cyokodog::lab</title>
+		<script src="./jquery-1.4.2.min.js"></script>
+		<script src="./jquery.exfixed-latest.js"></script>
+		<style>
+			html{
+				background-color:#333;
+			}
+			body{
+				background-color:#555;
+			}
+			div.stripe{
+				width:2000px;
+				height:50px;
+				margin:50px 0;
+				background:#505050;
+			}
+			#a{
+				background:#aaccff;
+			}
+			#b{
+				background:#aaffcc;
+			}
+			#c{
+				background:#ccffaa;
+			}
+			#d{
+				background:#aaffff;
+			}
+			.fixed{
+				text-align:center;
+			}
+
+		</style>
+        <script>
+jQuery(function($j){
+	for(var i=0;i<100;i++)$j('<div class="stripe">&nbsp;</div>').appendTo('div.dummy');
+	$j('#a,#b,#c,#d').exFixed({
+		api:true,
+		dynamicFixed:true,
+		top:0,
+		left:0
+	})
+	 .each(function(idx,fx){
+	  var size,orgSize,newSize;
+	  fx.fixedOpen(function(){
+	   var pos=[ {pos1:'top',pos2:'left'},
+	      {pos1:'top',pos2:'right'},
+	      {pos1:'bottom',pos2:'left'},
+	      {pos1:'bottom',pos2:'right'}
+	     ]
+	   orgSize={
+	    width:100,
+	    height:100
+	   }
+	   orgSize[pos[idx].pos1]=0;
+	   orgSize[pos[idx].pos2]=0;
+	   newSize={
+	    width:(80-idx*20)+'%',
+	    height:(80-idx*20)+'%'
+	   }
+	   newSize[pos[idx].pos1]=((idx+1)*10)+'%';
+	   newSize[pos[idx].pos2]=((idx+1)*10)+'%';
+	   fx.fixedClose(size=orgSize);
+	  });
+	  fx.getTarget()
+	   .css('opacity',.7)
+	   .css('z-index',idx)
+	   .click(function(){
+	    fx.fixedOpen(function(){
+	     size=(size==orgSize?newSize:orgSize)
+	     fx.getTarget().animate(fx.getFixedSize(size),function(){
+	      fx.fixedClose(size);
+	     });
+	    })
+	   })
+	 })
+})
+        </script>
+    </head>
+    <body>
+		<h1>IE6 Position Fixed Sample</h1>
+		<h2>jQuery.exFixed.js Ver 1.1</h2>
+		<p>ボックスをクリックしてください</p>
+		<p>再クリックで元の位置に戻ります</p>
+		<div id="a" class="fixed">click!</div>
+		<div id="b" class="fixed">click!</div>
+		<div id="c" class="fixed">click!</div>
+		<div id="d" class="fixed">click!</div>
+		<div class="dummy"></div>
+</body>
+</html>
