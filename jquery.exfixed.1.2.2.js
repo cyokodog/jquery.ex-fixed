@@ -1,8 +1,8 @@
 /*
- * 	exFixed 1.3.0 - jQuery plugin
+ * 	exFixed 1.2.2 - jQuery plugin
  *	written by Cyokodog	
  *
- *	Copyright (c) 2010 Cyokodog (http://d.hatena.ne.jp/cyokodog/)
+ *	Copyright (c) 2009 Cyokodog (http://d.hatena.ne.jp/cyokodog/)
  *	Dual licensed under the MIT (MIT-LICENSE.txt)
  *	and GPL (GPL-LICENSE.txt) licenses.
  *
@@ -10,35 +10,50 @@
  *	http://jquery.com
  *
  */
-(function($){
 
-	var API = function(api){
-		var api = $(api),api0 = api[0];
-		for(var name in api0)
-			(function(name){
-				if($.isFunction( api0[name] ))
-					api[ name ] = (/^get[^a-z]/.test(name)) ?
-						function(){
-							return api0[name].apply(api0,arguments);
-						} : 
-						function(){
-							var arg = arguments;
-							api.each(function(idx){
-								var apix = api[idx];
-								apix[name].apply(apix,arg);
-							})
-							return api;
-						}
-			})(name);
-		return api;
-	}
+(function($j){
 
-	var scrollEvent = function( target , config ){
+	$j.ex = $j.ex || {};
+	var ex = $j.extend({},$j.ex);
+
+	/*
+	 * 	ex.defineExPlugin 2.0
+	 */
+	ex.defineExPlugin = function( pluginName , constr , param){
+		$j.fn[ pluginName ]=
+			function( config , callback ){
+				var o = this,arr = [];
+				p = param ||{
+					eachTarget : true
+				};
+				if(p.eachTarget)
+					o.each(function( idx ){
+						arr.push(new constr( o.eq(idx) , config ));
+					});
+				else
+					arr.push(new constr( o , config ));
+				var obj = $j(arr);
+				for(var i in constr.prototype)( function(i){
+					if(i.slice(0,1)!= '_'){
+						obj[i] = function(){
+							return obj[0][i].apply( obj[0] , arguments );
+						};
+					}
+				})(i);
+				obj.target = function(){ return o };
+				o['get'+pluginName.substr(0,1).toUpperCase()+pluginName.substr(1)] = function(){
+					return obj;
+				};
+				if(typeof callback == 'function')obj.each(callback);				
+				return this;
+			};
+	};
+	ex.scrollEvent = function( target , config ){
 		var o = this;
 		if( typeof config == 'function') config = {
 			callback : config
 		}
-		var c = o.config = $.extend({},scrollEvent.defaults,config,{
+		var c = o.config = $j.extend({},ex.scrollEvent.defaults,config,{
 			target : target
 		});
 		c.status = 0;
@@ -56,7 +71,7 @@
 			},c.delay);
 		});
 	}
-	$.extend(scrollEvent.prototype,{
+	$j.extend(ex.scrollEvent.prototype,{
 		isMove : function(){
 			var o = this, c = o.config;
 			var pos = o.getPos();
@@ -79,69 +94,53 @@
 			}		
 		}
 	});
-	scrollEvent.defaults = {
+	ex.scrollEvent.defaults = {
 		delay : 100
 	}
 
-	$.ex = $.ex || {};
-
-	$.ex.fixed = function(idx , targets , option){
-		var o = this,
-		c = o.config = $.extend({} , $.ex.fixed.defaults , option);
-		c.targets = targets;
-		c.target = c.targets.eq(idx);
-		c.index = idx;
-
-		c = $.extend(c,{
+	$j.ex.fixed = function(target, config){
+		var o = this;
+		var c = o.config = $j.extend({},$j.ex.fixed.defaults,config,{
+			target : target,
 			logicSize : {},
 			rowSize : {},
 			currentStyle : '',
 			style : '',
-			window : $(window),
-			oldBrowser : $.browser.msie && ($.browser.version < 7.0 || !$.boxModel)
+			window : $j(window),
+			staticFixed : false,		
+			oldBrowser : $j.browser.msie && ($j.browser.version < 7.0 || !$j.boxModel)
 		});
-		c.dynamicMode = c.baseNode || !c.fixedX || !c.fixedY;
 
-		if (c.dynamicFixed || c.dynamicMode || c.oldBrowser){
-			$('body').append(c.target);
-		}
+		if(c.baseNode) c.baseNode = $(c.baseNode);
 
-		if (c.baseNode) c.baseNode = $(c.baseNode);
 		var size = o._cleanSize(c);
 
-		if (c.dynamicFixed) {
-			o._eachSizeSet(function(idx , at1 , cm1){
-				c.dynamicFixed = c.dynamicFixed && 
-					(size[at1.pos1] != undefined || size[at1.pos2] != undefined);
-			});
-		}
+		//static ?
+		o._eachSizeSet(function(idx , at1 , cm1){
+			c.staticFixed = c.staticFixed || 
+				(size[at1.pos1] == undefined && size[at1.pos2] == undefined);
+		});
 
-		if (c.dynamicMode) c.dynamicFixed = true;
-		if (c.oldBrowser) o._padPos( size , o._cleanSize(c.target[0].currentStyle) );
-		else if (!c.dynamicFixed) {
-			c.target.css('position','fixed').css(size);
-			return;
-		}
-//		c.container = $.boxModel && !$.browser.opera ? $('html') : $('body');
-		c.container = $.boxModel ? $('html') : $('body');
+		if( c.oldBrowser ) o._padPos( size , o._cleanSize(c.target[0].currentStyle) );
+		else if(c.staticFixed) return;
+
+		c.container = $j.boxModel ? $j('html') : $j('body');
 		c.container.height(); //for IE Bug
 
 		c.target.css('position',c.oldBrowser ? 'absolute' : 'fixed');
-//		if (c.oldBrowser && !/hidden|scroll/i.test(c.target.css('overflow'))) {
-		if (!/hidden|scroll/i.test(c.target.css('overflow'))) {
+		if(c.oldBrowser && !/hidden|scroll/i.test(c.target.css('overflow'))){
 			c.target.css('overflow','hidden');
 		}
 		o._smoothPatch();
 
 		o._fixed(size);
-
 		c.window.resize( function(){
-			if (c.oldBrowser || c.baseNode) {
+			if(c.oldBrowser || c.baseNode){
 				o._fixed();
 			}
 		});
 
-		if (!(c.fixedX && c.fixedY)) {
+		if(!(c.fixedX && c.fixedY)){
 			if (c.oldBrowser) {
 				var tm;
 				c.window.scroll(function(){
@@ -152,9 +151,9 @@
 				});
 			}
 			else{
-				new scrollEvent(c.window,function( evt , pa ){
-					if ((pa.scrollX && !c.fixedX) || (pa.scrollY && !c.fixedY)) {
-						if (pa.status == 1) {
+				new ex.scrollEvent(c.window,function( evt , pa ){
+					if((pa.scrollX && !c.fixedX) || (pa.scrollY && !c.fixedY)){
+						if(pa.status == 1){
 							o._fixed(c.logicSize,{
 								unfixed:true
 							});
@@ -168,7 +167,23 @@
 			}
 		}
 	}
-	$.extend($.ex.fixed.prototype, {
+	$j.ex.fixed.config = {
+		smoothPatched : false
+	};
+	$j.ex.fixed.defaults = {
+	//	top : ?,
+	//	right : ?,
+	//	bottom : ?,
+	//	left : ?,
+	//	width : ?,
+	//	height : ?,
+		baseNode : '',
+		baseX : true,
+		baseY : true,
+		fixedX : true,
+		fixedY : true
+	};
+	$j.extend($j.ex.fixed.prototype,{
 		_attn :[
 			{size:'height',pos1:'top',pos2:'bottom'},
 			{size:'width',pos1:'left',pos2:'right'}
@@ -177,14 +192,27 @@
 			{size:'Height',pos1:'Top',pos2:'Bottom'},
 			{size:'Width',pos1:'Left',pos2:'Right'}
 		],
+		_moveFixedFront : function(){
+			var o = this , c = o.config;
+			var parents = c.target.parents();
+			var containers = parents.filter(function(idx){
+				var el = parents.eq(idx);
+				return !(/HTML|BODY/i.test(el[0].tagName)) && parents.eq(idx).css('position')!='static';
+			});
+			if(containers.size())
+				containers.eq(containers.size()-1).after(c.target)
+			return o;
+		},
 		_smoothPatch : function(){
 			var o = this , c = o.config;
+			o._moveFixedFront();
 			if( !c.oldBrowser ) return o;
-			$.ex.fixed.config.smoothPatched = true;
-			if(c.container.css('background-image') == 'none'){
-				c.container.css({'background-image':'url(null)'});
+			$j.ex.fixed.config.smoothPatched = true;
+			var html = $j('html');
+			if(html.css('background-image') == 'none'){
+				html.css({'background-image':'url(null)'});
 			}
-			c.container.css({'background-attachment':'fixed'});
+			html.css({'background-attachment':'fixed'});
 			return o;
 		},
 		_eachSize : function( f ){
@@ -253,12 +281,13 @@
 		},
 		_calcRowSize : function( size , opt ){
 			var o = this , c = o.config;
-			var opt = $.extend({
+			var opt = $j.extend({
 				abs : false,
 				base : c.baseNode,
 				unfixed : false
 			},opt);
 			var ret = {};
+
 			o._eachSize( function( pa ){
 				var val = size[pa.name];
 				if(!(/undefined/i.test( val ))){
@@ -268,6 +297,7 @@
 					}
 				}
 			});
+
 			if(opt.base){
 				var basePos = c.baseNode.offset();
 				o._eachSizeSet( function(idx , pa , cm ){
@@ -282,6 +312,7 @@
 					}
 				});
 			}
+
 			var fg = opt.unfixed && !c.fixedX ? -1 : 1;
 			if(fg == -1|| (!opt.unfixed && !c.fixedY)){
 				if(ret.top != undefined)ret.top -= (c.window.scrollTop()*fg);
@@ -296,7 +327,7 @@
 		},
 		_fixed : function( size , opt ){
 			var o = this , c = o.config;
-			var opt = $.extend({
+			var opt = $j.extend({
 				unfixed : false
 			},opt);
 			if(size) c.logicSize = o._padPos(o._cleanSize(size),c.logicSize);
@@ -310,7 +341,6 @@
 			}
 			else{
 				var rowSize = o._calcRowSize( c.logicSize );
-//alert(rowSize.bottom)
 				var hide = false;
 				if (c.target.is(':hidden')) {
 					hide = true;
@@ -342,13 +372,13 @@
 				if(hide) c.target.hide();
 			}
 		},
-		getTarget : function(){
+		target : function(){
 			return this.config.target;
 		},
 		fixedOpen : function( f ){
 			var o = this , c = o.config;
-			if (!c.dynamicFixed) return;
-			c.target.css(o.getFixedSize(c.logicSize));
+			if(c.staticFixed) return;
+		
 			if (c.oldBrowser) {
 				c.target[0].style.removeExpression('top');
 				c.target[0].style.removeExpression('left');
@@ -366,11 +396,11 @@
 		},
 		fixedClose : function( size ){
 			var o = this , c = o.config;
-			if (!c.dynamicFixed) return;
+			if(c.staticFixed) return;
 			o._fixed( size );
 			return o;
 		},
-		getFixedSize : function( size ){
+		fixedSize : function( size ){
 			var o = this , c = o.config;
 			return o._calcRowSize(o._padPos(size,c.logicSize),{
 				abs : c.oldBrowser
@@ -384,34 +414,7 @@
 			return o;
 		}
 	});
-	$.ex.fixed.config = {
-		smoothPatched : false
-	};
-	$.ex.fixed.defaults = {
-	//	top : ,
-	//	right : ,
-	//	bottom : ,
-	//	left : ,
-	//	width : ,
-	//	height : ,
-		api : false,
-		dynamicFixed : false,		
-		baseNode : '',
-		baseX : true,
-		baseY : true,
-		fixedX : true,
-		fixedY : true
-	}
-	$.fn.exFixed = function(option){
-		var targets = this,api = [];
-		targets.each(function(idx) {
-			var target = targets.eq(idx);
-			var obj = target.data('ex-fixed') || new $.ex.fixed( idx , targets , option);
-			api.push(obj);
-			target.data('ex-fixed',obj);
-		});
-		return option && option.api ? API(api) : targets;
-	}
-})(jQuery);
+	ex.defineExPlugin('exFixed',$j.ex.fixed);
 
+})(jQuery);
 

@@ -6,6 +6,7 @@
 		<style>
 			html{
 				background-color:#333;
+				color:#fff;
 			}
 			body{
 				background-color:#555;
@@ -30,57 +31,57 @@
 			}
 			.fixed{
 				text-align:center;
+				color:#333;
+				filter: alpha(opacity=50);
+				-moz-opacity:0.5;
+				opacity:0.5;
 			}
 		</style>
 		<script src="./jquery-1.4.2.min.js"></script>
 		<script src="./jquery.exfixed-latest.js"></script>
 		<script>
 			jQuery(function($){
-                for (var i = 0; i < 100; i++) 
-                    $('<div class="stripe">&nbsp;</div>').appendTo('div.dummy');
-                var targets = $('#a,#b,#c,#d');
-                targets.each(function(idx){
-                    var size, orgSize;
-                    var target = targets.eq(idx);
-                    target.css('opacity', .7).css('z-index', idx);
-                    size = orgSize = {
-                        width: 250 - (idx * 50),
-                        height: 250 - (idx * 50),
-                        right: 100 + (idx * 25),
-                        bottom: 100 + (idx * 25)
-                    }
-                    var fx = target.exFixed($.extend({
-						api:true,
-						dynamicFixed:true
+				for (var i = 0; i < 100; i++) $('<div class="stripe">&nbsp;</div>').appendTo('div.dummy');
+
+				$('div.fixed').each(function(idx){
+					var orgSize;
+					var size = orgSize = {
+						width : 250 - (idx * 50),
+						height : 250 - (idx * 50),
+						right : 100 + (idx * 25),
+						bottom : 100 + (idx * 25)
+					}
+					var api = $(this).css('z-index', idx).exFixed($.extend({
+						api : true,
+						dynamicFixed : true
 					},size));
-                    target.click(function(){
-                        fx.fixedOpen(function(){
-                            size = (size == orgSize ? {
-                                right: '25%',
-                                bottom: (idx * 25) + '%',
-                                width: '50%',
-                                height: '24%'
-                            } : orgSize);
-                            target.animate(fx.getFixedSize(size), function(){
-                                fx.fixedClose(size);
-                            });
-                        })
-                    });
-                });
+					api.getTarget().click(function(){
+						api.fixedOpen(function(){
+							size = (size == orgSize ? {
+								right : '25%',
+								bottom : (idx * 25) + '%',
+								width : '50%',
+								height : '24%'
+							} : orgSize);
+							api.getTarget().animate(api.getFixedSize(size), function(){
+								api.fixedClose(size);
+							});
+						})
+					});
+				});
 
 
 			});
 		</script>
 	</head>
 	<body>
-		<h1>IE6 Position Fixed Sample</h1>
-		<h2>jQuery.exFixed.js Ver 1.2</h2>
+		<h1>jQuery exFixed</h1>
 		<p>ボックスをクリックしてください</p>
-		<p>再クリックで元の位置に戻ります</p>
-		<div id="a" class="fixed">click!</div>
-		<div id="b" class="fixed">click!</div>
-		<div id="c" class="fixed">click!</div>
-		<div id="d" class="fixed">click!</div>
+		<p>IE6 とその他のブラウザで挙動に差異が無いことを確認してみてください</p>
+		<div id="a" class="fixed"><strong>Fixed</strong><br/>click!</div>
+		<div id="b" class="fixed"><strong>Fixed</strong><br/>click!</div>
+		<div id="c" class="fixed"><strong>Fixed</strong><br/>click!</div>
+		<div id="d" class="fixed"><strong>Fixed</strong><br/>click!</div>
 		<div class="dummy"></div>
 	</body>
 </html>

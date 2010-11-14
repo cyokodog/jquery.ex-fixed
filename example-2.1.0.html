@@ -2,12 +2,13 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		<title>exFixed.js - cyokodog::lab</title>
+		<title>jQuery exFixed Plugin - Cyokodog</title>
 		<script src="./jquery-1.4.2.min.js"></script>
 		<script src="./jquery.exfixed-latest.js"></script>
 		<style>
 			html{
 				background-color:#333;
+				color:#fff;
 			}
 			body{
 				background-color:#555;
@@ -31,65 +32,55 @@
 				background:#aaffff;
 			}
 			.fixed{
+				filter: alpha(opacity=50);
+				-moz-opacity:0.5;
+				opacity:0.5;
 				text-align:center;
+				color:#333;
 			}
 
 		</style>
         <script>
-jQuery(function($j){
-	for(var i=0;i<100;i++)$j('<div class="stripe">&nbsp;</div>').appendTo('div.dummy');
-	$j('#a,#b,#c,#d').exFixed({
-		api:true,
-		dynamicFixed:true,
-		top:0,
-		left:0
-	})
-	 .each(function(idx,fx){
-	  var size,orgSize,newSize;
-	  fx.fixedOpen(function(){
-	   var pos=[ {pos1:'top',pos2:'left'},
-	      {pos1:'top',pos2:'right'},
-	      {pos1:'bottom',pos2:'left'},
-	      {pos1:'bottom',pos2:'right'}
-	     ]
-	   orgSize={
-	    width:100,
-	    height:100
-	   }
-	   orgSize[pos[idx].pos1]=0;
-	   orgSize[pos[idx].pos2]=0;
-	   newSize={
-	    width:(80-idx*20)+'%',
-	    height:(80-idx*20)+'%'
-	   }
-	   newSize[pos[idx].pos1]=((idx+1)*10)+'%';
-	   newSize[pos[idx].pos2]=((idx+1)*10)+'%';
-	   fx.fixedClose(size=orgSize);
-	  });
-	  fx.getTarget()
-	   .css('opacity',.7)
-	   .css('z-index',idx)
-	   .click(function(){
-	    fx.fixedOpen(function(){
-	     size=(size==orgSize?newSize:orgSize)
-	     fx.getTarget().animate(fx.getFixedSize(size),function(){
-	      fx.fixedClose(size);
-	     });
-	    })
-	   })
-	 })
-})
+
+jQuery(function($){
+	for(var i=0;i<100;i++)$('<div class="stripe">&nbsp;</div>').appendTo('div.dummy');
+
+	$('div.fixed').each(function(idx){
+		var orgCss = {}, newCss = {};
+		var hPos = (idx % 2) ? 'right' : 'left';
+		var vPos = (idx < 2) ? 'top' : 'bottom';
+
+		orgCss[hPos] = orgCss[vPos] = 0;
+		newCss[hPos] = newCss[vPos] = ((idx + 1) * 10 ) + '%';
+		orgCss['width'] = orgCss['height'] = 100;
+		newCss['width'] = newCss['height'] = (80-idx*20)+'%';
+
+		var css = orgCss;
+		var api = $(this).exFixed( $.extend({
+			api : true,
+			dynamicFixed : true
+		}, css ));
+
+		api.getTarget().click(function(){
+			css = ( css == orgCss ? newCss : orgCss );
+			api.fixedOpen(function(){
+				api.getTarget().animate(api.getFixedSize(css),function(){
+					api.fixedClose(css);
+				});
+			});
+		});
+	});
+});
         </script>
     </head>
     <body>
-		<h1>IE6 Position Fixed Sample</h1>
-		<h2>jQuery.exFixed.js Ver 1.1</h2>
-		<p>ボックスをクリックしてください</p>
-		<p>再クリックで元の位置に戻ります</p>
-		<div id="a" class="fixed">click!</div>
-		<div id="b" class="fixed">click!</div>
-		<div id="c" class="fixed">click!</div>
-		<div id="d" class="fixed">click!</div>
+		<h1>jQuery exFixed</h1>
+		<p>ボックスをクリックしてください<br/><span style="color:#ff5555">再クリックで元の位置に戻ります</span></p>
+		<p>IE6 とその他のブラウザで挙動に差異が無いことを確認してみてください</p>
+		<div id="a" class="fixed"><strong>Fixed</strong><br>click me!</a></div>
+		<div id="b" class="fixed"><strong>Fixed</strong><br>click me!</a></div>
+		<div id="c" class="fixed"><strong>Fixed</strong><br>click me!</a></div>
+		<div id="d" class="fixed"><strong>Fixed</strong><br>click me!</a></div>
 		<div class="dummy"></div>
 </body>
 </html>

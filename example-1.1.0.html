@@ -2,39 +2,53 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<title>jQuery exFixed Plugin - Cyokodog</title>
 		<script src="./jquery-1.4.2.min.js"></script>
 		<script src="./jquery.exfixed-latest.js"></script>
-        <script>
-            jQuery(function($j){
-				$j('.fixed').exFixed().css({
-					opacity:0
-				}).animate({
-					opacity:.5
-				},3000)
-            })
-        </script>
 		<style>
 			html{
-				background:#333;
+				background-color:#333;
 				color:#fff;
 			}
 			body{
-				background:#555;
-				color:#fff;
+				background-color:#555;
 			}
-			.abs{
-				position:absolute;
-				top:40%;
-				left:5%;
-				width:100px;
-				height:100px;
+			div.stripe{
+				width:2000px;
+				height:50px;
+				margin:50px 0;
+				background:#505050;
+			}
+			#a{
 				background:#aaccff;
-				color:#0055aa;
-				font-weight:bold;
-				text-align:center;
+			}
+			#b{
+				background:#aaffcc;
+			}
+			#c{
+				background:#ccffaa;
+			}
+			#d{
+				background:#aaffff;
 			}
 			.fixed{
+			}
+
+
+			.fixed{
 				position:fixed;
+				text-align:center;
+				color:#777;
+				z-index:10;
+				font-size:1.5em;
+			}
+			.fixed strong{
+				margin-top:1.5em;
+				display:block;
+			}
+			#left strong,
+			#right strong{
+				margin-top:10em;
 			}
 			#head{
 				width:100%;
@@ -42,15 +56,13 @@
 				top:0;
 				left:0;
 				background:#aaccff;
-				color:red;
 			}
-			#leftNavi{
+			#left{
 				width:20%;
 				height:100%;
 				top:0;
 				left:0;
 				background:#ccffaa;
-				color:red;
 			}
 			#foot{
 				width:100%;
@@ -58,19 +70,13 @@
 				bottom:0;
 				left:0;
 				background:#aaffff;
-				color:red;
 			}
-			#rightNavi{
+			#right{
 				width:20%;
 				height:100%;
 				top:0;
 				right:0;
 				background:#ccaaff;
-				color:red;
-			}
-			.dummy{
-				width:2000px;
-				height:2000px;
 			}
 			#center{
 				width:20%;
@@ -78,41 +84,73 @@
 				top:40%;
 				left:40%;
 				background:#ccccff;
-				color:red;
+			}
+			.abs{
+				position:absolute;
+				top:40%;
+				left:15%;
+				width:100px;
+				height:100px;
+				background:#aaccff;
+				color:#0055aa;
+				font-weight:bold;
+				text-align:center;
+			}
+			.dummy{
+				width:2000px;
+				height:2000px;
 			}
 		</style>
+        <script>
+
+jQuery(function($){
+	for(var i=0;i<100;i++)$('<div class="stripe">&nbsp;</div>').appendTo('div.dummy');
+//	var targets = $('#a,#b,#c,#d').css({opacity : 0.7});
+	var targets = $('div.fixed').exFixed().css({
+		opacity : 0.7
+	});
+return;
+
+	targets.each(function(idx){
+		var target = targets.eq(idx);
+		var orgCss = {};
+		var newCss = {};
+		var hPos = (idx % 2) ? 'right' : 'left';
+		var vPos = (idx < 2) ? 'top' : 'bottom';
+
+		orgCss[hPos] = orgCss[vPos] = 0;
+		newCss[hPos] = newCss[vPos] = ((idx + 1) * 10 ) + '%';
+		orgCss['width'] = orgCss['height'] = 100;
+		newCss['width'] = newCss['height'] = (80-idx*20)+'%';
+
+		var css = orgCss;
+		var fx = target.exFixed( $.extend({
+			api : true,
+			dynamicFixed : true
+		}, css ));
+
+		target.click(function(){
+			css = ( css == orgCss ? newCss : orgCss );
+			fx.fixedOpen(function(){
+				target.animate(fx.getFixedSize(css),function(){
+					fx.fixedClose(css);
+				});
+			});
+		});
+	});
+});
+        </script>
     </head>
     <body>
-		<h1>IE6 Position Fixed Sample</h1>
-		<h2>jQuery.exFixed.js を適用</h2>
-		<p>標準モードに適用してます。</p>
-		<p>ウィンドウのリサイズ、スクロール等をしてもくずれたりブレたりしません。</p>
+		<h1>jQuery exFixed Plugin</h1>
+		<p>IE6 でも position:fixed が可能になります<br/>ウィンドウをリサイズしたりスクロールをしても、表示がブレたり位置ずれをおこしたりしない事を確認してみてください</p>
+
+		<div id="left"   class="fixed"><strong>Fixed</strong></div>
+		<div id="right"  class="fixed"><strong>Fixed</strong></div>
+		<div id="head"   class="fixed"><strong>Fixed</strong></div>
+		<div id="foot"   class="fixed"><strong>Fixed</strong></div>
+		<div id="center" class="fixed"><strong>Fixed</strong></div>
+		<div class="abs"><strong>absolute</strong></div>
 		<div class="dummy"></div>
-		<div id="leftNavi" class="fixed"></div>
-		<div id="rightNavi" class="fixed"></div>
-		<div id="head" class="fixed"></div>
-		<div id="foot" class="fixed"></div>
-		<div id="center" class="fixed"></div>
-		<div class="abs">absolute</div>
-    <script type="text/javascript"><!--
-var fhp_c_pc = navigator.userAgent.toLowerCase();
-var fhp_ie = ((fhp_c_pc.indexOf("msie") != -1) && (fhp_c_pc.indexOf("opera") == -1));
-var fhp_cs, fhp_wt, fhp_dm;
-
-if (fhp_ie) {
-        fhp_cs = document.charset;
-}else{
-        fhp_cs = document.characterSet;
-}
-fhp_dm = document.location;
-
-fhp_wt = "";
-fhp_wt = '<' + 'script src="http://web.fc2.com/header.php?cs=' + fhp_cs + '&dm=' + fhp_dm + '" charset="UTF-8"><' + '/script>';
-fhp_wt += '<' + 'script src="http://web.fc2.com/footer/footer.php?cs=' + fhp_cs + '&dm=' + fhp_dm + '"><' + '/script>';
-document.write(fhp_wt);
-//--></script>
-<!-- FC2, inc.-->
-<img src="http://media.fc2.com/counter_img.php?id=50" style="visibility:hidden" alt="inserted by FC2 system" width="0" height="0">
-<!-- FC2, inc.-->
 </body>
 </html>

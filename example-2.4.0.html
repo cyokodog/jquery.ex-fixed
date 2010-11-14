@@ -8,6 +8,7 @@
 		<style>
 			html{
 				background-color:#333;
+				color:#fff;
 			}
 			body{
 				background-color:#555;
@@ -40,32 +41,35 @@
 			}
 			.fixed{
 				text-align:center;
+				color:#333;
+				filter: alpha(opacity=50);
+				-moz-opacity:0.5;
+				opacity:0.5;
 			}
 
 		</style>
         <script>
-			jQuery(function($j){
-				for(var i=0;i<100;i++)$j('<div class="stripe">&nbsp;</div>').appendTo('div.dummy');
-				$j('#a,#b,#c,#d').exFixed({
-					api:true,
-					dynamicFixed:true,
-					right:100,
-					bottom:100
+			jQuery(function($){
+				for(var i=0;i<100;i++) $('<div class="stripe">&nbsp;</div>').appendTo('div.dummy');
+				$('div.fixed').exFixed({
+					api : true,
+					dynamicFixed : true,
+					right : 100,
+					bottom : 100
 				})
-				.each(function(idx,fx){
-					fx.getTarget()
-						.css('opacity',.7)
+				.each(function(idx,api){
+					api.getTarget()
 						.css('z-index',idx)
 						.click(function(){
-							fx.fixedOpen(function(){
-							var size={
-								right:'25%',
-								bottom:(idx*25)+'%',
-								width:'50%',
-								height:'24%'
+							api.fixedOpen(function(){
+							var size = {
+								right : '25%',
+								bottom : (idx * 25) + '%',
+								width : '50%',
+								height : '24%'
 							};
-							fx.getTarget().animate(fx.getFixedSize(size),function(){
-								fx.fixedClose(size);
+							api.getTarget().animate(api.getFixedSize(size),function(){
+								api.fixedClose(size);
 							});
 						})
 					})
@@ -74,13 +78,13 @@
         </script>
     </head>
     <body>
-		<h1>IE6 Position Fixed Sample</h1>
-		<h2>jQuery.exFixed.js Ver 1.2</h2>
+		<h1>jQuery exFixed</h1>
 		<p>ボックスをクリックしてください</p>
-		<div id="a" class="fixed">click!</div>
-		<div id="b" class="fixed">click!</div>
-		<div id="c" class="fixed">click!</div>
-		<div id="d" class="fixed">click!</div>
+		<p>IE6 とその他のブラウザで挙動に差異が無いことを確認してみてください</p>
+		<div id="a" class="fixed"><strong>Fixed</strong><br/>click!</div>
+		<div id="b" class="fixed"><strong>Fixed</strong><br/>click!</div>
+		<div id="c" class="fixed"><strong>Fixed</strong><br/>click!</div>
+		<div id="d" class="fixed"><strong>Fixed</strong><br/>click!</div>
 		<div class="dummy"></div>
 	</body>
 </html>
