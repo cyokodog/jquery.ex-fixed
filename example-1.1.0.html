@@ -105,38 +105,8 @@
 
 jQuery(function($){
 	for(var i=0;i<100;i++)$('<div class="stripe">&nbsp;</div>').appendTo('div.dummy');
-//	var targets = $('#a,#b,#c,#d').css({opacity : 0.7});
 	var targets = $('div.fixed').exFixed().css({
 		opacity : 0.7
-	});
-return;
-
-	targets.each(function(idx){
-		var target = targets.eq(idx);
-		var orgCss = {};
-		var newCss = {};
-		var hPos = (idx % 2) ? 'right' : 'left';
-		var vPos = (idx < 2) ? 'top' : 'bottom';
-
-		orgCss[hPos] = orgCss[vPos] = 0;
-		newCss[hPos] = newCss[vPos] = ((idx + 1) * 10 ) + '%';
-		orgCss['width'] = orgCss['height'] = 100;
-		newCss['width'] = newCss['height'] = (80-idx*20)+'%';
-
-		var css = orgCss;
-		var fx = target.exFixed( $.extend({
-			api : true,
-			dynamicFixed : true
-		}, css ));
-
-		target.click(function(){
-			css = ( css == orgCss ? newCss : orgCss );
-			fx.fixedOpen(function(){
-				target.animate(fx.getFixedSize(css),function(){
-					fx.fixedClose(css);
-				});
-			});
-		});
 	});
 });
         </script>
